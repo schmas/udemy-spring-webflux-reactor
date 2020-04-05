@@ -13,9 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @DirtiesContext
@@ -53,5 +57,36 @@ class ItemControllerTest {
                      .expectHeader().contentType(MediaType.APPLICATION_JSON)
                      .expectBodyList(Item.class)
                      .hasSize(4);
+    }
+
+    @Test
+    void getAllItems_approach2() {
+        webTestClient.get().uri(ItemConstants.ITEM_END_POINT_V1)
+                     .exchange()
+                     .expectStatus().isOk()
+                     .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                     .expectBodyList(Item.class)
+                     .hasSize(4)
+                     .consumeWith(entityResult -> {
+                         final List<Item> items = entityResult.getResponseBody();
+                         Objects.requireNonNull(items).forEach(item -> {
+                             assertNotNull(item.getId());
+                         });
+                     });
+    }
+
+    @Test
+    void getAllItems_approach3() {
+        final Flux<Item> itemsFlux = webTestClient.get().uri(ItemConstants.ITEM_END_POINT_V1)
+                                                  .exchange()
+                                                  .expectStatus().isOk()
+                                                  .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                                                  .returnResult(Item.class)
+                                                  .getResponseBody();
+
+        StepVerifier.create(itemsFlux.log("value"))
+                    .expectSubscription()
+                    .expectNextCount(4)
+                    .verifyComplete();
     }
 }
