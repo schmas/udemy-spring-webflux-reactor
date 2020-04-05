@@ -75,4 +75,23 @@ class FluxAndMonoControllerTest {
                          assertEquals(expectedIntegers, response.getResponseBody());
                      });
     }
+
+    @Test
+    void fluxStream() {
+        final Flux<Long> longFlux =
+                webTestClient.get().uri("/fluxstream")
+                             .accept(MediaType.APPLICATION_STREAM_JSON)
+                             .exchange()
+                             .expectStatus().isOk()
+                             .returnResult(Long.class)
+                             .getResponseBody();
+
+        StepVerifier.create(longFlux)
+                    .expectSubscription()
+                    .expectNext(0L)
+                    .expectNext(1L)
+                    .expectNext(2L)
+                    .thenCancel()
+                    .verify();
+    }
 }
