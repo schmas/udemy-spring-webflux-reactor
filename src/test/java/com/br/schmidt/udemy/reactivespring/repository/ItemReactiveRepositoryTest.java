@@ -94,4 +94,36 @@ class ItemReactiveRepositoryTest {
                     .expectNextMatches(item -> item.getPrice() == 520.0)
                     .verifyComplete();
     }
+
+    @Test
+    void deleteItemById() {
+        final Mono<Void> deletedItem = itemReactiveRepository.findById("ABC")
+                                                             .map(Item::getId)
+                                                             .flatMap(itemReactiveRepository::deleteById);
+
+        StepVerifier.create(deletedItem.log())
+                    .expectSubscription()
+                    .verifyComplete();
+
+        StepVerifier.create(itemReactiveRepository.findAll().log())
+                    .expectSubscription()
+                    .expectNextCount(4)
+                    .verifyComplete();
+    }
+
+    @Test
+    void deleteItemByDescription() {
+        final Flux<Void> deletedItem =
+                itemReactiveRepository.findByDescription("Bose Headphones")
+                                      .flatMap(itemReactiveRepository::delete);
+
+        StepVerifier.create(deletedItem.log())
+                    .expectSubscription()
+                    .verifyComplete();
+
+        StepVerifier.create(itemReactiveRepository.findAll().log())
+                    .expectSubscription()
+                    .expectNextCount(4)
+                    .verifyComplete();
+    }
 }
