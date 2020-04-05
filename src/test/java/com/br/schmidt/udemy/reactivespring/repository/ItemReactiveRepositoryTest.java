@@ -65,4 +65,17 @@ class ItemReactiveRepositoryTest {
                     .expectNextMatches(item1 -> item1.getDescription().equals("Bose Headphones"))
                     .verifyComplete();
     }
+
+    @Test
+    void saveItem() {
+        final Item item = new Item(null, "Google Home Mini", 30.0);
+
+        final Mono<Item> savedItem = itemReactiveRepository.save(item);
+
+        StepVerifier.create(savedItem)
+                    .expectSubscription()
+                    .expectNextMatches(item1 -> item1.getId() != null
+                            && item1.getDescription().equals("Google Home Mini"))
+                    .verifyComplete();
+    }
 }
