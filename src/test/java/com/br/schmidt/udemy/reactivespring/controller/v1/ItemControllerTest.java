@@ -121,4 +121,13 @@ class ItemControllerTest {
                      .jsonPath("$.description").isEqualTo("Iphone X")
                      .jsonPath("$.price").isEqualTo(999.99);
     }
+
+    @Test
+    void deleteItem() {
+        webTestClient.delete().uri(ItemConstants.ITEM_END_POINT_V1 + "/{id}", "ABC")
+                     .accept(MediaType.APPLICATION_JSON)
+                     .exchange()
+                     .expectStatus().isNoContent()
+                     .expectBody(Void.class);
+    }
 }
