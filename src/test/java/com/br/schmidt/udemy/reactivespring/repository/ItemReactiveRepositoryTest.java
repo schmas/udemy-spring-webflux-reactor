@@ -38,7 +38,7 @@ class ItemReactiveRepositoryTest {
 
     @Test
     void getAllItems() {
-        final Flux<Item> allItems = itemReactiveRepository.findAll().log();
+        final Flux<Item> allItems = itemReactiveRepository.findAll();
 
         StepVerifier.create(allItems)
                     .expectSubscription()
@@ -48,7 +48,17 @@ class ItemReactiveRepositoryTest {
 
     @Test
     void getItemByID() {
-        final Mono<Item> item = itemReactiveRepository.findById("ABC").log();
+        final Mono<Item> item = itemReactiveRepository.findById("ABC");
+
+        StepVerifier.create(item)
+                    .expectSubscription()
+                    .expectNextMatches(item1 -> item1.getDescription().equals("Bose Headphones"))
+                    .verifyComplete();
+    }
+
+    @Test
+    void getItemByDescription() {
+        final Flux<Item> item = itemReactiveRepository.findByDescription("Bose Headphones").log();
 
         StepVerifier.create(item)
                     .expectSubscription()
