@@ -130,4 +130,32 @@ class ItemControllerTest {
                      .expectStatus().isNoContent()
                      .expectBody(Void.class);
     }
+
+    @Test
+    void updateItem() {
+        final Item item = new Item(null, "Beats Headphones", 129.99);
+
+        webTestClient.put().uri(ItemConstants.ITEM_END_POINT_V1 + "/{id}", "ABC")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .accept(MediaType.APPLICATION_JSON)
+                     .body(Mono.just(item), Item.class)
+                     .exchange()
+                     .expectStatus().isOk()
+                     .expectBody()
+                     .jsonPath("$.id").isEqualTo("ABC")
+                     .jsonPath("$.description").isEqualTo("Beats Headphones")
+                     .jsonPath("$.price").isEqualTo(129.99);
+    }
+
+    @Test
+    void updateItem_notFound() {
+        final Item item = new Item(null, "Beats Headphones", 129.99);
+
+        webTestClient.put().uri(ItemConstants.ITEM_END_POINT_V1 + "/{id}", "DEF")
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .accept(MediaType.APPLICATION_JSON)
+                     .body(Mono.just(item), Item.class)
+                     .exchange()
+                     .expectStatus().isNotFound();
+    }
 }
