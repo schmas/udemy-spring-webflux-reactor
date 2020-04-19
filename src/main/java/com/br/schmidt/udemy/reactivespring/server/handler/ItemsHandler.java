@@ -1,6 +1,8 @@
 package com.br.schmidt.udemy.reactivespring.server.handler;
 
 import com.br.schmidt.udemy.reactivespring.server.document.Item;
+import com.br.schmidt.udemy.reactivespring.server.document.ItemCapped;
+import com.br.schmidt.udemy.reactivespring.server.repository.ItemReactiveCappedRepository;
 import com.br.schmidt.udemy.reactivespring.server.repository.ItemReactiveRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 public class ItemsHandler {
 
     private final ItemReactiveRepository repository;
+    private final ItemReactiveCappedRepository cappedRepository;
 
     static Mono<ServerResponse> notFount = ServerResponse.notFound().build();
 
@@ -69,5 +72,11 @@ public class ItemsHandler {
 
     public Mono<ServerResponse> itemsEx(final ServerRequest serverRequest) {
         throw new RuntimeException("My Error Occurred 2");
+    }
+
+    public Mono<ServerResponse> itemsStream(final ServerRequest serverRequest) {
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_STREAM_JSON)
+                .body(cappedRepository.findAllBy(), ItemCapped.class);
     }
 }
