@@ -159,4 +159,13 @@ class ItemsHandlerTest {
                      .expectStatus().isNotFound();
     }
 
+    @Test
+    void runtimeException() {
+        webTestClient.get()
+                     .uri("/fun/runtimeexception")
+                     .exchange()
+                     .expectStatus().is5xxServerError()
+                     .expectBody()
+                     .jsonPath("$.message", "My Error Occurred 2");
+    }
 }

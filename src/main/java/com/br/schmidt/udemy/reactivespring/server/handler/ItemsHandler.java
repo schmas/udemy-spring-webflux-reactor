@@ -66,4 +66,8 @@ public class ItemsHandler {
                                                             .body(fromValue(item))
                 ).switchIfEmpty(notFount);
     }
+
+    public Mono<ServerResponse> itemsEx(final ServerRequest serverRequest) {
+        throw new RuntimeException("My Error Occurred 2");
+    }
 }

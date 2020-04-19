@@ -1,2 +1,6 @@
 ###
 GET http://localhost:8080/v1/items/runtimeException
+
+###
+GET http://localhost:8080/fun/runtimeexception
+Accept: application/json
