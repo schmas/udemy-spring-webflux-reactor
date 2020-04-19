@@ -6,7 +6,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @DirtiesContext
-class LearnReactivespringApplicationTests {
+class LearnReactiveSpringApplicationTests {
 
 	@Test
 	void contextLoads() {
